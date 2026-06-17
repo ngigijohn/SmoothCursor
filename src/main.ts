@@ -25,6 +25,9 @@ interface SmoothCursorPluginSettings {
 
 	// /** 光标闪烁速度 */
 	// blinkSpeed: number;
+
+	/** 光标动画类型 */
+	cursorAnimation: string;
 }
 
 const DEFAULT_SETTINGS: SmoothCursorPluginSettings = {
@@ -34,6 +37,7 @@ const DEFAULT_SETTINGS: SmoothCursorPluginSettings = {
 	trailColor: "#78dce8",
 	trailColorDark: "#78dce8",
 	// blinkSpeed: 1
+	cursorAnimation: "blink",
 };
 
 export default class SmoothCursorPlugin extends Plugin {
@@ -255,6 +259,8 @@ export default class SmoothCursorPlugin extends Plugin {
 		this.cursor[i] = cursor;
 		cursor.id = "smooth-cursor-busyo-" + i;
 		this.editorDom[i].appendChild(cursor);
+
+		this.applyAnimation(i);
 
 		let vimText = this.app.workspace.containerEl.createDiv();
 		this.vimText[i] = vimText;
@@ -566,6 +572,11 @@ export default class SmoothCursorPlugin extends Plugin {
 				const offset = cmView.state.doc.line(cursor.line + 1).from + cursor.ch;
 				let rect = cmView.coordsForChar(offset); // 获取 DOMRect
 				if (!rect) {
+					// Try coordsAtPos first — it handles empty lines and line-end positions better
+					rect = cmView.coordsAtPos(offset);
+				}
+
+				if (!rect) {
 					//判断是否表格
 					let selection = window.getSelection() as Selection;
 					let range = selection.getRangeAt(0);
@@ -623,6 +634,15 @@ export default class SmoothCursorPlugin extends Plugin {
 								range.setEnd(node, domInfo.offset);
 								const rt = range.getBoundingClientRect();
 								if (rt.width || rt.height) rect = rt;
+							}
+						} else {
+							// Empty line: domAtPos returned the cm-line element itself.
+							// Use its bounding rect to position the cursor at the start of the line.
+							if (node.nodeType === Node.ELEMENT_NODE) {
+								const lineRect = (node as Element).getBoundingClientRect();
+								if (lineRect.height > 0) {
+									rect = { left: lineRect.left, top: lineRect.top, right: lineRect.left, bottom: lineRect.bottom };
+								}
 							}
 						}
 					}
@@ -899,5 +919,16 @@ export default class SmoothCursorPlugin extends Plugin {
 
 	updateSetting() {
 		if (!this.cursor) return;
+		for (const key of Object.keys(this.cursor)) {
+			this.applyAnimation(Number(key));
+		}
+	}
+
+	applyAnimation(i: number) {
+		const el = this.cursor[i];
+		if (!el) return;
+		const animClasses = ["anim-blink", "anim-smooth", "anim-phase", "anim-expand", "anim-solid"];
+		animClasses.forEach(cls => el.removeClass(cls));
+		el.addClass(`anim-${this.setting.cursorAnimation}`);
 	}
 }

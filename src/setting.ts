@@ -55,6 +55,24 @@ export class SmoothCursorSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
+            .setName("光标动画 Cursor animation")
+            .setDesc("设置光标动画类型 (blink, smooth, phase, expand, solid)")
+            .addDropdown((dropdown) => {
+                dropdown
+                    .addOption("blink", "Blink")
+                    .addOption("smooth", "Smooth")
+                    .addOption("phase", "Phase")
+                    .addOption("expand", "Expand")
+                    .addOption("solid", "Solid")
+                    .setValue(this.plugin.setting.cursorAnimation)
+                    .onChange(async (value) => {
+                        this.plugin.setting.cursorAnimation = value;
+                        this.plugin.updateSetting();
+                        await this.plugin.saveSettings();
+                    });
+            });
+
+        new Setting(containerEl)
             .setName("拖尾颜色 Trail color")
             .setDesc("设置拖尾颜色")
             .addColorPicker((text) => {
