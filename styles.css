@@ -72,7 +72,38 @@ body.caret-hide {
     display: none;
 }
 
+/* Cursor animation types */
+
+.smooth-cursor-busyo.anim-blink {
+    animation: blink calc(var(--cursor-blink-speed) * 1s) infinite;
+}
+
+.smooth-cursor-busyo.anim-smooth {
+    animation: smooth calc(var(--cursor-blink-speed) * 1s) ease-in-out infinite;
+}
+
+.smooth-cursor-busyo.anim-phase {
+    animation: phase calc(var(--cursor-blink-speed) * 1s) ease-in-out infinite;
+}
+
+.smooth-cursor-busyo.anim-expand {
+    animation: expand calc(var(--cursor-blink-speed) * 1s) ease-in-out infinite;
+    transform-origin: bottom;
+}
+
+.smooth-cursor-busyo.anim-solid {
+    animation: none;
+    opacity: 1;
+}
+
+/* Override all anim-* when noAni is applied */
+.smooth-cursor-busyo.noAni {
+    animation: none;
+}
+
 /* 定义 @keyframes 动画 */
+
+/* blink: classic abrupt on/off */
 @keyframes blink {
 
     0%,
@@ -82,5 +113,40 @@ body.caret-hide {
 
     50% {
         opacity: 1;
+    }
+}
+
+/* smooth: smooth sinusoidal fade (VS Code "smooth") */
+@keyframes smooth {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 0;
+    }
+}
+
+/* phase: partial fade — cursor stays partially visible (VS Code "phase") */
+@keyframes phase {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.1;
+    }
+}
+
+/* expand: cursor scales vertically (VS Code "expand") */
+@keyframes expand {
+    0%, 100% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scaleY(0.15);
+        opacity: 0.6;
     }
 }

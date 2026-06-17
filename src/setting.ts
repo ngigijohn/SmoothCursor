@@ -1,4 +1,4 @@
-import SmoothCursorPlugin from "src/main";
+import SmoothCursorPlugin, { CURSOR_ANIMATION_TYPES } from "src/main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 
 export class SmoothCursorSettingTab extends PluginSettingTab {
@@ -53,6 +53,22 @@ export class SmoothCursorSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     })
             );
+
+        new Setting(containerEl)
+            .setName("光标动画 Cursor animation")
+            .setDesc("设置光标动画类型 (blink, smooth, phase, expand, solid)")
+            .addDropdown((dropdown) => {
+                CURSOR_ANIMATION_TYPES.forEach(type =>
+                    dropdown.addOption(type, type.charAt(0).toUpperCase() + type.slice(1))
+                );
+                dropdown
+                    .setValue(this.plugin.setting.cursorAnimation)
+                    .onChange(async (value) => {
+                        this.plugin.setting.cursorAnimation = value;
+                        this.plugin.updateSetting();
+                        await this.plugin.saveSettings();
+                    });
+            });
 
         new Setting(containerEl)
             .setName("拖尾颜色 Trail color")
