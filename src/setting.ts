@@ -1,4 +1,4 @@
-import SmoothCursorPlugin from "src/main";
+import SmoothCursorPlugin, { CURSOR_ANIMATION_TYPES } from "src/main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 
 export class SmoothCursorSettingTab extends PluginSettingTab {
@@ -58,12 +58,10 @@ export class SmoothCursorSettingTab extends PluginSettingTab {
             .setName("光标动画 Cursor animation")
             .setDesc("设置光标动画类型 (blink, smooth, phase, expand, solid)")
             .addDropdown((dropdown) => {
+                CURSOR_ANIMATION_TYPES.forEach(type =>
+                    dropdown.addOption(type, type.charAt(0).toUpperCase() + type.slice(1))
+                );
                 dropdown
-                    .addOption("blink", "Blink")
-                    .addOption("smooth", "Smooth")
-                    .addOption("phase", "Phase")
-                    .addOption("expand", "Expand")
-                    .addOption("solid", "Solid")
                     .setValue(this.plugin.setting.cursorAnimation)
                     .onChange(async (value) => {
                         this.plugin.setting.cursorAnimation = value;

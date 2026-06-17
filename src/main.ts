@@ -30,6 +30,9 @@ interface SmoothCursorPluginSettings {
 	cursorAnimation: string;
 }
 
+export const CURSOR_ANIMATION_TYPES = ["blink", "smooth", "phase", "expand", "solid"] as const;
+type CursorAnimationType = typeof CURSOR_ANIMATION_TYPES[number];
+
 const DEFAULT_SETTINGS: SmoothCursorPluginSettings = {
 	trailStep: 30,
 	enableTrail: true,
@@ -641,7 +644,7 @@ export default class SmoothCursorPlugin extends Plugin {
 							if (node.nodeType === Node.ELEMENT_NODE) {
 								const lineRect = (node as Element).getBoundingClientRect();
 								if (lineRect.height > 0) {
-									rect = { left: lineRect.left, top: lineRect.top, right: lineRect.left, bottom: lineRect.bottom };
+									rect = { left: lineRect.left, top: lineRect.top, right: lineRect.left, bottom: lineRect.bottom } as { left: number; top: number; right: number; bottom: number };
 								}
 							}
 						}
@@ -927,8 +930,7 @@ export default class SmoothCursorPlugin extends Plugin {
 	applyAnimation(i: number) {
 		const el = this.cursor[i];
 		if (!el) return;
-		const animClasses = ["anim-blink", "anim-smooth", "anim-phase", "anim-expand", "anim-solid"];
-		animClasses.forEach(cls => el.removeClass(cls));
+		CURSOR_ANIMATION_TYPES.forEach(type => el.removeClass(`anim-${type}`));
 		el.addClass(`anim-${this.setting.cursorAnimation}`);
 	}
 }
