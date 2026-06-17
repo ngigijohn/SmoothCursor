@@ -644,7 +644,7 @@ export default class SmoothCursorPlugin extends Plugin {
 							if (node.nodeType === Node.ELEMENT_NODE) {
 								const lineRect = (node as Element).getBoundingClientRect();
 								if (lineRect.height > 0) {
-									rect = { left: lineRect.left, top: lineRect.top, right: lineRect.left, bottom: lineRect.bottom } as { left: number; top: number; right: number; bottom: number };
+									rect = { left: lineRect.left, top: lineRect.top, right: lineRect.left, bottom: lineRect.bottom };
 								}
 							}
 						}
